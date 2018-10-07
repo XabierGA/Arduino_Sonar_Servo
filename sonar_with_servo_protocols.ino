@@ -50,7 +50,91 @@ RMS_mean measure_mean(int pwpin){
   
 }
 
+//Function to convert the number written to the Serial line to int. Since we already restricted the commands given, we can use the position of the number in the string.
+
+int parsear(char* input){
+  char* auxi = NULL; 
+  auxi = input + 6 ;
+  int posi = 0;
+  int reto = 0;
+  while (*auxi >= 48 && *auxi <=57){
+    if ((*auxi < 48 || *auxi >57 ) ){
+      Serial.println(*auxi);
+      Serial.println("Unknown command");
+      return -1;
+    }
+    else {
+      if (posi){
+        reto*=10;
+        reto+= *auxi -48;
+        
+      }
+      else{
+        reto = *auxi - 48; 
+        posi++;
+      }
+    }
+    auxi++; 
+  }
+  return reto;
+}
+
+//this function will be used to compare commands extracting the non-numeric values.
+
+int comparar(char* str) {
+  int ret = 0 ;
+  char* aux = NULL;
+  int len = (int)strlen(str);
+  aux = (char*)malloc(len*sizeof(char));
+  int count = 0;
+  int i = 0;
+  while (*(str+i) != '\0') {
+    if (len<10){
+      if ((*(str+i)>=48 && *(str+i) <=57) || ((*(str+i+1)>=48 && *(str+i+1) <=57) && *(str+i) == ' ')){
+        i++;
+      }
+      else {
+        *(aux + count) = *(str+i);
+        i++;
+        count++;
+      }
+    }
+    else{
+      if ((*(str+i)>=48 && *(str+i) <=57) || ((*(str+i-1)>=48 && *(str+i-1) <=57) && *(str + i) == ' ')){
+        i++;
+      }
+      else{
+        *(aux + count) = *(str+i);
+        i++;
+        count++;
+       
+      }
+       
+    }
+    
+  }
+  
+  *(aux + count ) = '\0';
+  
+  String car = String(aux);
+  String opcion1 = "go to";
+  String opcion2 = "go to and measure";
+  if (car==opcion1){
+    ret = 1;
+  }
+  else if (car ==opcion2){
+    ret = 2;
+  }
+  else {
+    Serial.println("Error");
+  }
+  
+  return ret;
+}
+
+
 void setup() {
+  //initialize our setup.
   myServo.attach(9);
   pinMode(pwpin, HIGH);
   Serial.begin(9600);
@@ -59,17 +143,28 @@ void setup() {
 
 }
 
-char line[32];
+//create an array of char to read from the serial line.
+
+char line[26];
 
 
 void loop() {
   //We will need commands from the serial line to activate our protocols. 
   if (Serial.available()){
-    Serial.readStringUntil('n').toCharArray(line, 30); 
+    Serial.readStringUntil('\n').toCharArray(line, 26); 
+
     //depending on which command we type on the serial line, we have 4 different protocols
-    if (strstr(line , "go to") == line){
+    if (comparar(line) == 1){
       //forces the servo to rotate
-      
+      int pos = parsear(line);
+      if (pos<= 180){
+        myServo.write(pos);
+        Serial.println(pos);
+      }
+      else{
+        Serial.println("Servo can only rotate 180 degrees ");
+      }
+    
     }
     else if (strstr(line , "scan") == line){
       //servo sweeps while scanning
@@ -102,15 +197,21 @@ void loop() {
       Serial.println(medidas.rms);
       
     }
-    else if (strstr(line , "go to and measure") == line){
+    else if (comparar(line)==2){
       //servo rotates to the position typed and then sonar measures.
-      myServo.write(10);
-      RMS_mean medidas = measure_mean(pwpin);
-      Serial.print(medidas.mean);
-      Serial.print(" , ");
-      Serial.print(medidas.rms);
-      Serial.print(" , ");
-      Serial.println(10);
+      int pos = parsear(line);
+      if (pos<=180){
+        myServo.write(pos);
+        RMS_mean medidas = measure_mean(pwpin);
+        Serial.print(medidas.mean);
+        Serial.print(" , ");
+        Serial.print(medidas.rms);
+        Serial.print(" , ");
+        Serial.println(pos);
+      }
+      else {
+        Serial.println("Servo can only move 180 degrees");
+      }
     }
     else{
       Serial.println("Unknown command, please type one of the following: ");
