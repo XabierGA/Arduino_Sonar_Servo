@@ -1,0 +1,62 @@
+# ./sonar_goto.db 
+
+record(ao, "$(USER):goto"){
+	field(DESC, "GOTO")
+	field(DTYP , "stream")
+	field(OUT , "@sonar_array.proto go_to $(PORT)")
+}
+# ./sonar_measure_pos.db 
+
+record(ai, "$(USER):measure_pos"){
+	field(DESC, "MEASURE POS")
+	field(DTYP , "stream")
+	field(SCAN , "1 second")
+	field(INP , "@sonar_array.proto get_pos $(PORT)")
+}
+# .../Db/sonar_scan_dis.db
+
+record(waveform , "$(USER):wf") {
+	field(DESC, "SCAN DIS waveform")
+	field(DTYP , "stream")
+	field(SCAN , "1 second")
+	field(NELM, "6")
+	field(FTVL, "FLOAT")
+	field(INP , "@sonar_array.proto get_dis_scan $(PORT)")
+}
+# .../Db/sonar_scan_rms.db
+
+record(waveform , "$(USER):wfrms") {
+	field(DESC, "SCAN RMS waveform")
+	field(DTYP , "stream")
+	field(SCAN , "1 second")
+	field(NELM, "6")
+	field(FTVL, "FLOAT")
+	field(INP , "@sonar_array.proto get_rms_scan $(PORT)")
+}
+# ./sonar_measure_dis.db 
+
+record(ai, "$(USER):measure_dis"){
+	field(DESC, "MEASURE DIS")
+	field(DTYP , "stream")
+	field(SCAN , "1 second")
+	field(INP , "@sonar_array.proto get_dis $(PORT)")
+}
+# ./sonar_measure_rms.db 
+
+record(ai, "$(USER):measure_rms"){
+	field(DESC, "MEASURE RMS")
+	field(DTYP , "stream")
+	field(SCAN , "1 second")
+	field(INP , "@sonar_array.proto get_rms $(PORT)")
+}
+# .../Db/sonar_scan_pos.db
+
+record(waveform , "$(USER):wfpos") {
+	field(DESC, "SCAN POS waveform")
+	field(DTYP , "stream")
+	field(SCAN , "1 second")
+	field(NELM, "6")
+	field(FTVL, "FLOAT")
+	field(INP , "@sonar_array.proto get_dis_pos $(PORT)")
+}
+#add a dummy variable to check the date that it was last updated

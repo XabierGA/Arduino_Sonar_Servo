@@ -1,0 +1,60 @@
+# ./sonar_array.proto
+Terminator = CR LF; 
+#use waveform
+
+get_time {
+	out "TIME?";
+	in "%f";
+	ExtraInput = Ignore;
+}
+
+get_scan { 
+	out "SCAN?";
+	ExtraInput = Ignore;
+}
+
+get_dis_scan {
+	out "WF DIS?";
+	separator =",";
+	in "%f"; 
+	ExtraInput = Ignore; 
+}
+
+get_rms_scan {
+	out "WF RMS?";
+	separator =",";
+	in "%f"; 
+	ExtraInput = Ignore; 
+}
+
+get_pos_scan { 
+	out "WF POS?";
+	separator = ","; 
+	in "%f" ; 
+	ExtraInput = Ignore; 
+}  
+
+get_dis{
+	out "MEASURE?";
+	in "MEASURE %f,%*f,%*i";
+	ExtraInput = Ignore;
+}
+
+get_rms{
+	out "MEASURE?";
+	in "MEASURE %f,%*f,%*i";
+	ExtraInput = Ignore;
+}
+
+get_pos{
+	out "MEASURE?";
+	in "MEASURE %*f,%*f,%i";
+	ExtraInput = Ignore;
+}
+
+
+go_to{
+	out "GOTO %i";
+	in "POS %i";
+	ExtraInput = Ignore; 
+}
