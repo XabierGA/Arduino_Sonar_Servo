@@ -1,0 +1,333 @@
+\documentclass{beamer}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usetheme{Copenhagen}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amsopn} 
+\usepackage{amsmath,amssymb,lmodern}
+\usepackage{pgf}  
+\usepackage{textpos}
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber  
+}
+%\logo{\pgfputat{\pgfxy(-1,7)}{\pgfbox[center,base]{\includegraphics[width=1.0cm]{logo.png}}}}
+
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(\textwidth,-1cm)
+\includegraphics[height=1cm,width=1cm,keepaspectratio]{logo.png}
+\end{textblock*}}
+
+\title{Monitoring Helium storage with a LV-MaxSOnar-EZ1 sonar sensor}
+\subtitle{From Sensor to Report - 1FA349}
+\author[ Xabier García Andrade]{\includegraphics[height=3cm,width=3cm]{logo.png}\\  Xabier García Andrade}
+
+
+
+\begin{document}
+	\frame {
+		\titlepage
+	}
+	\frame {
+		\frametitle{FREIA Laboratoriet}
+		\begin{columns}[T]
+		\begin{column}[T]{5cm}
+		\begin{block}{Purpose}
+      Accelerator development and light generation by charged particles. 
+   \end{block}
+   		\begin{alertblock}{How are particles accelerated?}
+		RF cavities and magnets to deflect their trajectories.
+		\end{alertblock}
+		\includegraphics[height = 3cm]{IMG_20181108_164216.jpg}
+		\end{column}
+		\begin{column}[T]{5cm}
+		\begin{exampleblock}{Cooling down the equipment.}
+		\includegraphics[height = 3cm]{IMG_20181108_164125.jpg}
+		\end{exampleblock}
+		\begin{itemize}
+		\item Helium Liquifier.
+		\item 2 K cryostats.
+		\end{itemize}
+		\end{column}
+		\end{columns}
+	}
+	\frame {
+		\frametitle{Motivation of the Project}
+		\begin{columns}[T]
+		\begin{column}[T]{5cm}
+		\begin{block}{Scope}
+      Monitoring the amount of helium contained in the gas balloon.
+   \end{block}
+%   		\begin{figure}
+%    \subfloat{{\includegraphics[height = 3.5cm]{scheme.png} }}
+%    \qquad
+%    \subfloat{{\includegraphics[height = 3.5cm]{IMG_20181108_164636.jpg} }}
+%    \label{fig:example}
+%\end{figure}
+	\begin{figure}
+   \includegraphics[width=0.8\textwidth]{scheme.png}
+   \hfill
+   \includegraphics[width=0.475\textwidth]{IMG_20181108_164636.jpg}
+\end{figure}
+		\end{column}
+		\begin{column}[T]{5cm}
+		\begin{exampleblock}{How do we achieve this?}
+		Using ultrasounds to measure the distance to the surface from different angles.
+		\end{exampleblock}
+		\includegraphics[width = 3.5cm]{bat.jpg}
+		\includegraphics[height = 3cm]{batman.jpeg}
+		\end{column}
+		\end{columns}
+	}
+	\frame{
+		\frametitle{Overview}
+		\includegraphics[width=1.0 \textwidth]{diagram.png}
+		}
+	\frame{
+		\frametitle{Hardware}
+		\framesubtitle{Sensors and actuators}
+		\begin{columns}[T] 
+     \begin{column}[T]{5cm}
+  	 \begin{block}{Sonar}
+      Emits a short ultrasonic sound burst and records the duration until the echo arrives.
+  	 \end{block}
+  	 \begin{alertblock}{Several Output Modes}
+  	 We use Pulse Width.
+  	 \end{alertblock}
+  	 \begin{exampleblock}{Specifications.}
+  	 \begin{itemize}
+  	 \item Resolution of 1 in.
+  	 \item Maximun Range of 254 in.
+  	 \item Operates from 2.5 V to 5.5 V and draws 2 mA.
+  	 \end{itemize}
+  	 \end{exampleblock}
+     \end{column}
+     \begin{column}[T]{6cm} 
+          \includegraphics[height=3cm]{sonar_with_diagram.png}
+			\vspace{1.0cm}
+          \begin{figure}[!b]
+          \includegraphics[width= 5cm]{pulse_width.png}
+          \end{figure}
+     \end{column}
+     \end{columns}
+		}
+		\frame{
+		\frametitle{Hardware}
+		\framesubtitle{Sensors and actuators}
+		\begin{columns}[T] 
+     \begin{column}[T]{5cm}
+     \begin{block}{Servo}
+      Motor with a position encoder.
+  	 \end{block}
+  	 \begin{exampleblock}{How to control it.}
+  	 By sending a PWM signal, the width of the pulse determines the position of the servo.
+  	 \end{exampleblock}
+  	 \begin{figure}[b]
+  	 \includegraphics[width = 5.5cm]{servo_pw.png}
+  	 \end{figure}
+     \end{column}
+     \begin{column}[T]{5cm} 
+          \includegraphics[height=3cm]{servo_with_diagram.png}
+          \begin{alertblock}{Mechanical Attachment.}
+          \includegraphics[height=3cm]{attachment.jpg}
+          \end{alertblock}
+     \end{column}
+     \end{columns}
+		}
+	\frame{
+		\frametitle{Hardware}
+		\framesubtitle{Arduino Uno}
+		\begin{columns}[T]
+	\begin{column}[T]{5 cm}
+	\begin{itemize}
+	\item Microcontroller board 
+	\item 14 digital input/output pins 
+	\item USB connection 
+	\item 16 MHz quartz crystal \\~\\
+	\end{itemize} 
+	\textbf{Reads the raw signal from the sensor and transforms it into a relevant physical quantity.}
+	\end{column}	
+		\begin{column}[T]{5cm} 
+		  \begin{figure}[t]
+		  \includegraphics[width= 3 cm]{diagram_arduino.png}
+		  \end{figure}
+          \includegraphics[height=5cm]{arduino_uno.jpg}
+     \end{column}
+     \end{columns}
+		
+	}
+		\frame{
+		\frametitle{Interface}
+		\begin{columns}[T]
+		\begin{column}[T]{6.5 cm}
+		\begin{itemize}
+		\item Ethernet shield allows the arduino to communicate via Ethernet.
+		\item More reliable and faster than Bluetooth.
+		\end{itemize}
+		\includegraphics[width = 7cm]{ethernet_snippet.png}
+		\end{column}
+		
+		\begin{column}[T]{5 cm}
+				  \begin{figure}[t]
+		  \includegraphics[width= 3 cm]{diagram_ethernet.png}
+		  \end{figure}
+		\includegraphics[height=4cm]{eth_shield.jpg}
+		\end{column}
+		\end{columns}
+		
+	}
+		\frame{
+		\frametitle{Epics Control System}
+		\begin{columns}[T]
+		\begin{column}[T]{6 cm}
+		\begin{block}{What is it?}
+		Software tools used to create distributed soft real-time control systems for scientific instruments such as a particle accelerators.
+		\end{block}
+		\begin{exampleblock}{Specifications}
+		\begin{itemize}
+		\item Communication: Client/Server and Publish/Subscribe techniques.
+		\item Servers: IOCs (Input/Output Controllers).
+		
+		\end{itemize}
+		\end{exampleblock}
+		\end{column}
+		\begin{column}[T]{5 cm}
+		\includegraphics[width=1.0\textwidth]{kstar_epics.jpg}
+		\includegraphics[width=1.0\textwidth]{slac_epics.jpg}
+		\begin{exampleblock}{}
+		\begin{itemize}
+		\item Publish: Using Channel Access (CA) network protocol.
+		\end{itemize}
+		\end{exampleblock}
+		\end{column}
+		\end{columns}
+	}
+	\frame{
+		\frametitle{Software}
+		\framesubtitle{Arduino Protocols}
+		\begin{columns}[T]
+		\begin{column}[T]{5cm}
+		\begin{block}{Setup:}
+		At the beginning we need to specify the pins that we will be using, as  well as initialize the Ethernet server
+		\end{block}
+  		 \end{column}
+  		 \begin{column}[T]{7cm}
+  			 \includegraphics[height=4cm]{setup.png}
+
+  		 \end{column}
+		
+		\end{columns}
+	}
+	\frame{
+		\frametitle{Software}
+		\framesubtitle{Arduino Protocols}
+		\begin{columns}[T]
+		\begin{column}[T]{5cm}
+		\begin{block}{Function where the distance is measured:}
+		\end{block}
+		\includegraphics[height=4cm]{code_measure.png}
+  		 \end{column}
+  		 \begin{column}[T]{5cm}
+  		 	 		\textbf{Three different commands:}
+		 \begin{exampleblock}{"Scan"}
+   			Servo rotates while measuring distance in every position
+   		 \end{exampleblock}
+  			 \includegraphics[height=3.2cm]{scan_snippet.png}
+
+  		 \end{column}
+		
+		\end{columns}
+	}
+	\frame{
+		\frametitle{Software}
+		\framesubtitle{Arduino Protocols - II}
+		\begin{columns}[T]
+		\begin{column}[T]{5.5cm}
+		 \begin{exampleblock}{"Go to"}
+  		 Servo moves to the selected position
+   			\end{exampleblock}
+   		  \includegraphics[height=2cm]{go_to_snippet.png}
+  		 \end{column}
+  		 \begin{column}[T]{6cm}
+ 		    \begin{exampleblock}{"Measure"}
+   		 Measures distance without moving
+  		 \end{exampleblock}
+  			 \includegraphics[height=2.5cm]{measure_snippet.png}
+  		 \end{column}
+		\end{columns}
+	}
+	\frame{
+		\frametitle{Software}
+		\framesubtitle{Arduino Protocols - III}
+		\begin{columns}[T]
+		\begin{column}[T]{5 cm}
+		\begin{block}{Waveforms}
+		After scaning, all the values will be stored in a matrix. Since we want to assign these values to a process variable in epics, we print them as a waveform.
+		\end{block}
+		\end{column}
+		\begin{column}[T]{6 cm}
+		\includegraphics[height=5cm]{waveforms.png}
+		\end{column}
+		\end{columns}
+	}
+
+	\frame{
+		\frametitle{Software}
+		\framesubtitle{Epics Control System}
+		
+		\begin{columns}		
+		 \begin{column}[T]{6cm}
+		 	\begin{alertblock}{Database File}
+		 	Establishes how every variable is stored.
+		 	\end{alertblock}
+  			 \includegraphics[width = 6.5cm]{epics_db_snippet.png}
+ 			 \begin{figure}[b]
+ 			 \includegraphics[width = 2.5cm]{diagram_epics.png}
+ 			 \end{figure}
+  		 \end{column}
+  		 \begin{column}[T]{4cm}
+  		 \begin{alertblock}{Protocol File}
+  		 Defines functions that will be used to obtain the variables:
+  		 \end{alertblock}
+  		 \includegraphics[width = 4.5cm]{epics_proto_snippet.png}
+  		\end{column}
+  		\end{columns}
+		
+	}
+	\frame{
+		\frametitle{Prototype}
+		\begin{columns}[T]
+		\begin{column}[T]{5 cm}
+		\includegraphics[width = 4.5cm]{60graosteito.png}
+		\includegraphics[width = 4.5cm]{plot_snipp.png}
+		\end{column}
+		\begin{column}[T]{5 cm}
+		\includegraphics[width = 4.5cm]{scan_python.png}
+		\end{column}
+		\end{columns}
+	}
+		
+	\frame{
+	    \frametitle{Future Enhancements}
+	    \begin{block}{In the next future...}
+	    \begin{itemize}
+	    \item Array of Sonars. 
+	    \item Sonar with better resolution. 
+	    \item Kinect for 3D reconstruction.
+	    \item Guide Rail. 
+	    \end{itemize}
+	    \begin{figure}[H]
+	    \includegraphics[width = 6 cm]{cern_random.jpg}
+	    \end{figure}
+	    \end{block}
+
+
+	}
+\end{document}
